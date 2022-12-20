@@ -1,11 +1,28 @@
 import pafy
 import tkinter as tk
 from tkinter import filedialog
+import threading
 
 selected_path = "./"
+event = threading.Event()
+
+
+
+def start_threading(): 
+    threading.Thread(target=convert_message).start()
+    convert_to_mp3()
+
+
+def convert_message():
+    message = tk.Tk()
+    label = tk.Label(message,text="Converting...")
+    label.pack()
+    message.mainloop()
 
 
 def convert_to_mp3():
+    # Informiere über den Convertierungvorgang
+    threading.Thread(target=convert_message).start()
     # Hole das YouTube-Video
     video = pafy.new(url_entry.get())
     # Hole den besten Audio-Stream
@@ -13,6 +30,7 @@ def convert_to_mp3():
     # Lade den Audio-Stream herunter und speichere ihn an dem von dem Benutzer ausgewählten Ort
     best_audio.download(filepath=selected_path)
     # Setze die Nachricht auf "Conversion complete"
+    event.set()
 
 def select_path():
     global selected_path
@@ -39,7 +57,7 @@ url_label = tk.Label(text="YouTube URL:", font=("Arial", 14), fg="#000000", bg="
 url_entry = tk.Entry(font=("Arial", 14), bg="#ffffff")
 
 # Erstelle einen Button zum Starten der Konvertierung
-convert_button = tk.Button(text="Convert", font=("Arial", 14), fg="#ffffff", bg="#0000ff", command=convert_to_mp3)
+convert_button = tk.Button(text="Convert", font=("Arial", 14), fg="#ffffff", bg="#0000ff", command=start_threading)
 
 # Erstelle einen Button zum Auswählen des Speicherpfads
 select_path_button = tk.Button(text="Select Save Location", font=("Arial", 14), fg="#ffffff", bg="#0000ff", command=select_path)
@@ -52,6 +70,7 @@ url_label.grid(row=0, column=0, padx=5, pady=5)
 url_entry.grid(row=0, column=1, padx=5, pady=5)
 convert_button.grid(row=1, column=1, padx=5, pady=5)
 select_path_button.grid(row=2, column=1, padx=5, pady=5)
+
 
 def is_valid_url(url):
     # Prüfe, ob die URL mit "https://www.youtube.com/watch?v=" beginnt
