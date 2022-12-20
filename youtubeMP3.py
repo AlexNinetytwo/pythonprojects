@@ -4,25 +4,48 @@ from tkinter import filedialog
 import threading
 
 selected_path = "./"
-event = threading.Event()
+threadevent = threading.Event()
+
+class Message(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.mesWin = tk.Tk()
+        self.mesLab = tk.Label(self.mesWin,text="Converting...")
+
+    def loop(self):
+        self.mesWin.mainloop()
+
+    def stop(self):
+        self.mesWin.destroy()
 
 
 
-def start_threading(): 
-    threading.Thread(target=convert_message).start()
+def start_threading():
+    message = Message()
+    thread1 = threading.Thread(target=message.loop)
+    thread1.start()
     convert_to_mp3()
+    message.stop()
 
 
-def convert_message():
+
+def stop_convert_message():
+    message = tk.Tk()
+    label = tk.Label(message,text="Converting...")
+    message.destroy()
+
+def set_convert_message():
     message = tk.Tk()
     label = tk.Label(message,text="Converting...")
     label.pack()
     message.mainloop()
 
 
+
 def convert_to_mp3():
-    # Informiere über den Convertierungvorgang
-    threading.Thread(target=convert_message).start()
+       
+    convert_button.configure(state=tk.DISABLED)
+    select_path_button.configure(state=tk.DISABLED)
     # Hole das YouTube-Video
     video = pafy.new(url_entry.get())
     # Hole den besten Audio-Stream
@@ -30,7 +53,9 @@ def convert_to_mp3():
     # Lade den Audio-Stream herunter und speichere ihn an dem von dem Benutzer ausgewählten Ort
     best_audio.download(filepath=selected_path)
     # Setze die Nachricht auf "Conversion complete"
-    event.set()
+    convert_button.configure(state=tk.NORMAL)
+    select_path_button.configure(state=tk.NORMAL)
+    print("Finish")
 
 def select_path():
     global selected_path
