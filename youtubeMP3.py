@@ -14,6 +14,7 @@ selected_path = "./"
 # Setze den Konvertierstatus
 converting = False
 
+
 def on_closing():
     # Wenn ein Thread definiert wurde
     try:
@@ -231,6 +232,19 @@ def update_buttons():
         convert_button.configure(state=tk.DISABLED)
         select_path_button.configure(state=tk.DISABLED)
 
+m = tk.Menu(window, tearoff = 0)
+m.add_command(label ="Einfügen")
+  
+def do_popup(event):
+    try:
+        m.tk_popup(event.x_root, event.y_root)
+    finally:
+        m.grab_release()
+        url_entry.insert(0,window.clipboard_get())
+        update_buttons()
+  
+
+url_entry.bind("<Button-3>", do_popup)
 
 # Füge einen Eingabe-Event-Handler hinzu, um die Buttons bei jeder Eingabe im Eingabefeld zu aktualisieren
 url_entry.bind("<KeyRelease>", lambda event: update_buttons())
