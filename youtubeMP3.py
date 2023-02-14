@@ -5,7 +5,7 @@ from tkinter import messagebox
 import os, sys
 import threading
 
-# Youtube to mp3 converter, made by 0100000101011000 and CHATGPT
+__author__ = "AlexNintytwo"
 
 # Wenn noch keine URL angegeben wurde
 given_name = ""
